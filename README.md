@@ -14,7 +14,7 @@ Set environment variables:
 - `MQTT\_PASSWORD=<password>`
 - (`DATABASE\_URL` is set automatically)
 
-To deploy new version to heroku:
+To deploy new version to heroku ([help](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xviii-deployment-on-heroku)):
 - Commit changes to local git repository
 - `$ heroku login`
 - `$ git push heroku master`
