@@ -1,4 +1,4 @@
-#CatanEX
+# CatanEX
 
 A simple online exchange for trading in-game commodities in Settlers of Catan.
 
@@ -6,7 +6,7 @@ Flask application, including database management for persistent storage on the s
 
 Deployed to free heroku app: `arcane-inlet-24402`
 
-##Setup
+## Setup
 
 Set environment variables:
 - `FLASK_APP=exchange.py`
@@ -24,18 +24,17 @@ To connect to custom domain: ([help](https://devcenter.heroku.com/articles/custo
 - Configure app's DNS provider to point to the DNS Target `example.herokudns.com`
 
 
-##Usage
+## Usage
 
-###Dashboard
+### Dashboard
 `/<account>`
 Dashboard page to create/cancel orders, view best bid/ask and latest prices.
 
-If account does not exist, one is created automatically with a default balance of $100.
+If account does not exist, one is created automatically with a default balance.
 
-##API
+## API
 
 REST API to create, update and delete orders and accounts
 
-###Delete everything
-Delete all accounts, orders and trades
-`DELETE /api`
+### Delete everything
+`DELETE /api` Delete all accounts, orders and trades
