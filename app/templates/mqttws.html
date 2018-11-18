@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+
+Test of Cloud MQTT connection to browser application using websockets
+
+<button id="mqtt">Click me!</button>
+
+<script>
+// Create a client instance - may need to persist client ID to ensure client gets any missed messages?
+client = new Paho.MQTT.Client("m21.cloudmqtt.com", 37683, "client_test");
+console.log("New MQTT client with id: "+client.clientId+", path: "+client.path);
+
+// set callback handlers
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+// connect the client
+console.log("Attempting to connect...")
+  var connectOptions = {
+    useSSL: true,
+    userName: "xyuugvam",
+    password: "Z9fkoBGYzflI",
+    onSuccess:onConnect,
+    onFailure:doFail,	
+    cleanSession: false
+  }
+client.connect(connectOptions);
+
+function doFail(e) {
+  console.log(e)
+}
+
+// called when the client connects
+function onConnect() {
+  // Once a connection has been made, make a subscription.
+  console.log("onConnect");
+  var subscribeOptions = {
+    qos: 1
+  }
+  client.subscribe("/exchange/rick");
+}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+  }
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+  alert("payload: "+message.payloadString+", QoS: "+message.qos);
+}
+
+btn = document.getElementById("mqtt");
+btn.onclick = function(){
+	message = new Paho.MQTT.Message(Date.now().toString());
+  message.destinationName = "/exchange/rick";
+  message.qos = 1;
+  client.send(message);	
+};
+
+</script>
+
+</body>

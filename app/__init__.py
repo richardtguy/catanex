@@ -1,21 +1,15 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask.json import JSONEncoder
-from app import orderbook
-
-class OrderJSONEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, orderbook.Order):
-            return obj.toJSON()
-        return super(OrderJSONEncoder, self).default(obj)
-        
 
 app = Flask(__name__)
 app.config.from_object('config')
-app.json_encoder = OrderJSONEncoder
 
-ledger = orderbook.Ledger()
-messenger = orderbook.Messenger()
-stocks = ["sheep", "bricks", "wood"]
-book = orderbook.OrderBook(ledger, messenger, stocks)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-from app import api, views, orderbook
+from app import orderbook
+catan_ex = orderbook.Exchange(["sheep", "bricks", "wood"], orderbook.Messenger())
+
+from app import api, views, models

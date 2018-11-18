@@ -1,7 +1,6 @@
 // Initialise page
 $(document).ready(function(){
 	// Refresh balance, order and stock prices
-	// To-do: Create new account on exchange server if not found
 	refresh();
 	$("#btn-refresh").on("click", refresh);
 	$("#userAccount").html(account);
@@ -44,8 +43,8 @@ function refresh(){
 function cancelOrder(id){
 	fetch('/api/orders/'+id, {
 		method: 'delete'
-	});
-	refresh();
+	})
+		.then(data => refresh());
 }
 
 // API call to get list of orders for account and write to table
@@ -53,7 +52,7 @@ function refreshOrders(){
 	fetch("/api/orders/"+account)
 		.then(response => response.json())
 		.then(data => {
-			var orders = data.asks.concat(data.bids);				
+			var orders = data;				
 			var table = document.getElementById("orderTableBody");
 			for(var i = table.rows.length - 1; i > -1; i--) {
 				table.deleteRow(i);
