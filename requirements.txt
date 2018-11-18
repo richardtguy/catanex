@@ -5,12 +5,14 @@ Click==7.0
 Flask==1.0.2
 Flask-Migrate==2.3.0
 Flask-SQLAlchemy==2.3.2
+gunicorn==19.9.0
 idna==2.7
 itsdangerous==1.1.0
 Jinja2==2.10
 Mako==1.0.7
 MarkupSafe==1.1.0
 paho-mqtt==1.4.0
+psycopg2==2.7.6.1
 PyJWT==1.6.4
 PySocks==1.6.8
 python-dateutil==2.7.5
@@ -19,6 +21,5 @@ pytz==2018.7
 requests==2.20.1
 six==1.11.0
 SQLAlchemy==1.2.13
-twilio==6.19.2
 urllib3==1.24.1
 Werkzeug==0.14.1
