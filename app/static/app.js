@@ -141,20 +141,14 @@ function refreshChart(){
 			return response.json();
 		})
 		.then(function(data){
-			console.log("Start. data: "+JSON.stringify(data));
 			$.each(data, function(index){
 				points = []
 				$.each(this.data, function(){
 					points.push({x:new Date(this.timestamp), y:this.price});
-					console.log("2. points: "+JSON.stringify(points));
 				})
 				datasets.push({label:this.stock, fill:false, borderColor: palette[index], data:points});
-				console.log("1. datasets: "+JSON.stringify(datasets));
 			})
-			console.log("End. datasets: "+JSON.stringify(datasets));
 			var ctx = document.getElementById("stockChart").getContext('2d');
-			// to-do: add colour palette for line colours
-			// to-do: fix problem with refreshing chart when new trade is executed(!?)
 			var stockChart = new Chart(ctx, {
 					type: 'line',
 					data: {
