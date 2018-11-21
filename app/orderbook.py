@@ -57,7 +57,7 @@ class Exchange():
 					order.volume = order.volume - volume
 					if order.volume == 0:
 						db.session.delete(order)
-				db.session.commit()								
+				db.session.commit()							
 				# send messages to buyer and seller
 				buy_msg = "{} bought {} {} at ${} each!".format(bid.owner.name,
 					volume, bid.stock, price)

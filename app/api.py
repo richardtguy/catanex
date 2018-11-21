@@ -31,7 +31,8 @@ def place_order():
 		"limit":o.limit,
 		"status":"open"
 	}
-	catan_ex.trade(r['stock'])
+	while(catan_ex.trade(r['stock'])):
+		pass
 	return make_response(jsonify({"response":response}), 200)
 
 # Cancel an order in the order book
@@ -46,23 +47,27 @@ def cancel_order_by_id(id):
 @app.route('/api/orders/<account>', methods=['GET'])
 def list_orders_by_account(account):
 	account = models.Account.query.filter_by(name=account).first()
-	orders = account.orders.all()
-	response = []
-	for order in orders:
-		response.append({
-			'timestamp':order.timestamp,
-			'stock':order.stock,
-			'side':order.side,
-			'volume':order.volume,
-			'limit':order.limit,
-			'id':order.id
-		})
-	return make_response(jsonify(response), 200)
+	if account == None:
+		return make_response(jsonify({"response":"account does not exist"}), 404)
+	else:
+		orders = account.orders.all()
+		response = []
+		for order in orders:
+			response.append({
+				'timestamp':order.timestamp,
+				'stock':order.stock,
+				'side':order.side,
+				'volume':order.volume,
+				'limit':order.limit,
+				'id':order.id
+			})
+		return make_response(jsonify(response), 200)
 
 # Return a list of all orders in the book
 @app.route('/api/orders', methods=['GET'])
 def list_orders():
 	orders = models.Order.query.all()
+	response = []
 	for order in orders:
 		response.append({
 			'timestamp':order.timestamp,
@@ -110,6 +115,18 @@ def get_best_prices():
 			'last':			last_price
 		})
 	return make_response(jsonify(prices), 200)
+
+# Get historic trade prices and volumes for each stock traded on the exchange
+@app.route('/api/trades', methods=['GET'])
+def get_trades():
+	response = []
+	for stock in catan_ex.traded_stocks:
+		trades = models.Trade.query.filter_by(stock=stock).all()
+		list = []
+		for t in trades:
+			list.append({'timestamp':t.timestamp, 'price':t.price, 'volume':t.volume})
+		response.append({'stock': stock, 'data':list})
+	return make_response(jsonify(response), 200)
 
 # Add an account
 @app.route('/api/accounts', methods=['POST'])

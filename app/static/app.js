@@ -37,6 +37,7 @@ function refresh(){
 	refreshOrders();
 	refreshBalance();
 	refreshPrices();
+	refreshChart();
 }
 
 // API call to cancel order by id
@@ -129,6 +130,59 @@ function refreshBalance(){
 		});
 }			
 
+// Define colour palette
+var palette = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A', '#922428', '#948B3D']
+
+// Refresh chart
+function refreshChart(){
+	datasets = []
+	fetch("/api/trades")
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(data){
+			console.log("Start. data: "+JSON.stringify(data));
+			$.each(data, function(index){
+				points = []
+				$.each(this.data, function(){
+					points.push({x:new Date(this.timestamp), y:this.price});
+					console.log("2. points: "+JSON.stringify(points));
+				})
+				datasets.push({label:this.stock, fill:false, borderColor: palette[index], data:points});
+				console.log("1. datasets: "+JSON.stringify(datasets));
+			})
+			console.log("End. datasets: "+JSON.stringify(datasets));
+			var ctx = document.getElementById("stockChart").getContext('2d');
+			// to-do: add colour palette for line colours
+			// to-do: fix problem with refreshing chart when new trade is executed(!?)
+			var stockChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+							datasets: datasets
+					},
+					options: {
+							elements: {
+								line: {
+										tension: 0, // disables bezier curves
+								}
+							},
+							scales: {
+									xAxes: [{
+											type: 'time',
+											time: {
+												unit: 'minute',
+												displayFormats: {
+													hour: 'hh:mm a'
+												},
+											},
+											position: 'bottom'
+									}]
+							}
+					}
+			});
+		});
+}
+
 // Get inputs from form and submit API call to create new order
 $("form").submit(function(event) {
 	event.preventDefault();
@@ -182,6 +236,5 @@ function onMessageArrived(message) {
 	console.log("payloadString: "+message.payloadString+", QoS: " + message.qos);
 	// Bug in MQTT broker with websockets? -> QoS of received messages is 0, so not
 	// received if client was offline when message was published
-	refresh();
 	alert(message.payloadString);
 }
