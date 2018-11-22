@@ -3,6 +3,7 @@ REST API for CatanEX exchange
 """
 import config
 from app import app, models, db, catan_ex
+from app.nocache import nocache
 
 from flask import abort, make_response, jsonify, request
 import datetime
@@ -45,6 +46,7 @@ def cancel_order_by_id(id):
 
 # Return a list of all orders in the book for a specified account
 @app.route('/api/orders/<account>', methods=['GET'])
+@nocache
 def list_orders_by_account(account):
 	account = models.Account.query.filter_by(name=account).first()
 	if account == None:
@@ -65,6 +67,7 @@ def list_orders_by_account(account):
 
 # Return a list of all orders in the book
 @app.route('/api/orders', methods=['GET'])
+@nocache
 def list_orders():
 	orders = models.Order.query.all()
 	response = []
@@ -81,11 +84,13 @@ def list_orders():
 	
 # Return list of stocks traded on the exchange
 @app.route('/api/stocks', methods=['GET'])
+@nocache
 def get_traded_stocks():
 	return make_response(jsonify({"stocks": catan_ex.traded_stocks}), 200)
 
 # Get best bid/ask and latest executed price for all stocks traded on exchange
 @app.route('/api/prices', methods=['GET'])
+@nocache
 def get_best_prices():
 	prices = []
 	for stock in catan_ex.traded_stocks:
@@ -118,6 +123,7 @@ def get_best_prices():
 
 # Get historic trade prices and volumes for each stock traded on the exchange
 @app.route('/api/trades', methods=['GET'])
+@nocache
 def get_trades():
 	response = []
 	for stock in catan_ex.traded_stocks:
@@ -141,6 +147,7 @@ def add_account():
 
 # Get balance on an account
 @app.route('/api/accounts/<name>', methods=['GET'])
+@nocache
 def get_balance(name):
 	account = models.Account.query.filter_by(name=name).first()
 	if account == None:
