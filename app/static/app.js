@@ -191,3 +191,11 @@ stream.onmessage = function(message) {
 	console.log("Received message: " + message.data);
 	alert(message.data);
 };
+stream.onopen = function() {
+	document.getElementById("connection-status").setAttribute("style", "color:black;")
+	console.log("Websocket opened");
+};
+stream.onclose = function(event) {
+	document.getElementById("connection-status").setAttribute("style", "color:lightgray;")
+  console.log("Websocket connection closed: "+JSON.stringify(event));
+};
