@@ -1,2 +1,2 @@
 release: flask db upgrade
-web: gunicorn --worker-class eventlet -w 1 app:app
+web: gunicorn --worker-class flask_sockets.worker -w 1 app:app
