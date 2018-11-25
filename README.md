@@ -4,14 +4,14 @@ A simple online exchange for trading in-game commodities in Settlers of Catan.
 
 Flask application, including database management for persistent storage on the server, based on [this](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database) tutorial.
 
+Notifications are pushed to browser clients via websocket connections.
+
 Deployed to free heroku app: `arcane-inlet-24402`
 
 ## Setup
 
 Set environment variables:
 - `FLASK_APP=exchange.py`
-- `MQTT\_USER=<username>`
-- `MQTT\_PASSWORD=<password>`
 - (`DATABASE\_URL` is set automatically)
 
 To deploy new version to heroku ([help](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xviii-deployment-on-heroku)):

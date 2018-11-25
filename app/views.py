@@ -6,7 +6,5 @@ import config
 def index(account):
 	return render_template(
 		'dashboard.html',
-		account=account,
-		mqtt_user=config.MQTT_USER,
-		mqtt_password=config.MQTT_PASSWORD
-	)
+		account=account
+)

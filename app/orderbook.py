@@ -1,6 +1,6 @@
 import datetime
 from operator import attrgetter
-import paho.mqtt.publish as publish
+from queue import Queue
 
 from app import models, db
 import config
@@ -8,17 +8,13 @@ import config
 
 class Messenger():
 	"""
-	Dispatch messages about executed trades to participants by MQTT
+	Add messages about executed trades to queue to send to clients by websocket connections
 	"""
-	def send_message(self, message, phone=""):
-		publish.single(
-			"/exchange", 
-			payload=message,
-			qos=1,
-			hostname=config.MQTT_HOST,
-			port=config.MQTT_PORT,
-			auth={"username":config.MQTT_USER, "password":config.MQTT_PASSWORD}
-		)
+	def __init__(self, queue):
+		self.q = queue
+	
+	def send_message(self, message):
+		self.q.put(message)
 
 
 class Exchange():
