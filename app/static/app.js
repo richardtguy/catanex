@@ -14,22 +14,6 @@ $(document).ready(function(){
 				options.appendChild(o).innerHTML = this;
 			})
 		});
-	// Create MQTT client instance, using account name as client id
-	client = new Paho.MQTT.Client("m21.cloudmqtt.com", 37683, "web_" + account);
-	// set callback handlers
-	client.onConnectionLost = onConnectionLost;
-	client.onMessageArrived = onMessageArrived;
-	// connect the client
-	var connectOptions = {
-		useSSL: true,
-		userName: MQTT_USER,
-		password: MQTT_PASSWORD,
-		onSuccess:onConnect,
-		onFailure:doFail,
-		cleanSession:false
-	}
-	console.log("Attempting to connect with options: "+JSON.stringify(connectOptions)+"...")
-	client.connect(connectOptions);
 })	
 
 // Refresh data on page
@@ -199,36 +183,11 @@ $("form").submit(function(event) {
 	$("#orderModal").modal("hide");
 });
 
-// MQTT Client functions
-// called if client fails to connect
-function doFail(e) {
-  console.log(e)
-}
-
-// called when the client connects
-function onConnect() {
-  // Once a connection has been made, make a subscription.
-  console.log("onConnect: Connected to MQTT server");
-  document.getElementById("connection-status").setAttribute("style", "color:black;")
-  var subscribeOptions = {
-    qos: 1
-  }
-  // Subscribe to topic for this account
-  client.subscribe("/exchange");
-}
-
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-  if (responseObject.errorCode !== 0) {
-	  document.getElementById("connection-status").setAttribute("style", "color:lightgray;")
-    console.log("onConnectionLost:"+responseObject.errorMessage);
-  }
-}
-
+// Connect websocket
+console.log("Connecting via websocket...");
+var stream = new ReconnectingWebSocket('ws://' + location.host + "/stream");
 // called when a message arrives
-function onMessageArrived(message) {
-	console.log("payloadString: "+message.payloadString+", QoS: " + message.qos);
-	// Bug in MQTT broker with websockets? -> QoS of received messages is 0, so not
-	// received if client was offline when message was published
-	alert(message.payloadString);
-}
+stream.onmessage = function(message) {
+	console.log("Received message: " + message.data);
+	alert(message.data);
+};
