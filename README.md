@@ -12,7 +12,7 @@ Deployed to free heroku app: `arcane-inlet-24402`
 
 Set environment variables:
 - `FLASK_APP=exchange.py`
-- (`DATABASE\_URL` is set automatically)
+- (`DATABASE_URL` is set automatically)
 
 To deploy new version to heroku ([help](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xviii-deployment-on-heroku)):
 - Commit changes to local git repository
