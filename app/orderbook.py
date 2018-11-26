@@ -1,8 +1,9 @@
 import datetime
 from operator import attrgetter
 from queue import Queue
+import logging
 
-from app import models, db
+from app import models, db, app
 import config
 
 
@@ -37,6 +38,7 @@ class Exchange():
 
 		# match best bid/ best ask for trade if possible			
 		if (bid and ask) and (bid.limit >= ask.limit):
+			app.logger.info('Found matching bid/ask pair')
 			order_pair = sorted([bid, ask], key=attrgetter('volume'))
 			volume = order_pair[0].volume
 			order_pair.sort(key=attrgetter('timestamp'))
@@ -46,6 +48,7 @@ class Exchange():
 				# cancel trade and try again
 				return True
 			else:
+				app.logger.info('Executing trade')
 				# execute trade
 				bid.owner.balance = bid.owner.balance - (volume * price)
 				ask.owner.balance = ask.owner.balance + (volume * price)

@@ -130,6 +130,7 @@ function refreshChart(){
 				$.each(this.data, function(){
 					points.push({x:new Date(this.timestamp), y:this.price});
 				})
+				points.sort((a, b) => a.x - b.x);
 				datasets.push({label:this.stock, fill:false, borderColor: palette[index], data:points});
 			})
 			var ctx = document.getElementById("stockChart").getContext('2d');

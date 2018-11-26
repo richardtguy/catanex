@@ -2,7 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_sockets import Sockets
+import logging
 from queue import Queue
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 app.config.from_object('config')
