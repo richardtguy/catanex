@@ -19,14 +19,16 @@ $(document).ready(function(){
 // Refresh data on page
 function refresh(){
 	document.getElementById("api-status").classList.add("fa-spinner")
+	console.log("Refreshing...");
 	Promise.all([
-		refreshOrders,
-		refreshBalance,
-		refreshPrices,
-		refreshChart
+		refreshOrders(),
+		refreshBalance(),
+		refreshPrices(),
+		refreshChart()
 	])
 	.then(() => {
 		document.getElementById("api-status").classList.remove("fa-spinner");
+		console.log("...finished!");
 	});
 }
 
@@ -40,7 +42,8 @@ function cancelOrder(id){
 }
 
 // API call to get list of orders for account and write to table
-const refreshOrders = fetch("/api/orders/"+account)
+function refreshOrders(){
+	fetch("/api/orders/"+account)
 	.then(response => response.json())
 	.then(data => {
 		var orders = data;				
@@ -70,9 +73,11 @@ const refreshOrders = fetch("/api/orders/"+account)
 				cancelOrder(this.id);
 		}});
 	})
+}
 
 // API call to get latest bid/ask prices for each stock and write to table
-const refreshPrices = fetch("/api/prices")
+function refreshPrices() {
+	fetch("/api/prices")
 	.then(response => response.json())
 	.then(data => {
 		var table = document.getElementById("priceTableBody");
@@ -85,11 +90,13 @@ const refreshPrices = fetch("/api/prices")
 			row.insertCell().innerHTML = this.best_bid;
 			row.insertCell().innerHTML = this.best_ask;
 			row.insertCell().innerHTML = this.last;						
+		});
 	})
-})
+}
 
 // API call to get latest balance and write to page
-const refreshBalance = fetch("/api/accounts/"+account)
+function refreshBalance(){
+	fetch("/api/accounts/"+account)
 	.then(function(response) {
 		if(response.ok) {
 			return response.json();
@@ -112,12 +119,14 @@ const refreshBalance = fetch("/api/accounts/"+account)
 	.then(data => {
 		$("#balance").html(data.balance)
 	})
+}
 
 // Define colour palette
 const palette = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A', '#922428', '#948B3D']
 
 // Refresh chart
-const refreshChart = fetch("/api/trades")
+function refreshChart() {
+	fetch("/api/trades")
 	.then(function(response) {
 		return response.json();
 	})
@@ -158,6 +167,7 @@ const refreshChart = fetch("/api/trades")
 				}
 		});
 	})
+}
 
 // Get inputs from form and submit API call to create new order
 $("form").submit(function(event) {
