@@ -18,7 +18,7 @@ $(document).ready(function(){
 
 // Refresh data on page
 function refresh(){
-	document.getElementById("status").classList.add("fa-spinner")
+	document.getElementById("api-status").classList.add("fa-spinner")
 	Promise.all([
 		refreshOrders,
 		refreshBalance,
@@ -26,7 +26,7 @@ function refresh(){
 		refreshChart
 	])
 	.then(() => {
-		document.getElementById("status").classList.remove("fa-spinner");
+		document.getElementById("api-status").classList.remove("fa-spinner");
 	});
 }
 
@@ -190,10 +190,10 @@ stream.onmessage = function(message) {
 	alert(message.data);
 };
 stream.onopen = function() {
-	document.getElementById("status").setAttribute("style", "color:black;")
+	document.getElementById("ws-status").setAttribute("style", "color:black;")
 	console.log("Websocket opened");
 };
 stream.onclose = function(event) {
-	document.getElementById("status").setAttribute("style", "color:lightgray;")
+	document.getElementById("ws-status").setAttribute("style", "color:lightgray;")
   console.log("Websocket connection closed: "+JSON.stringify(event));
 };
