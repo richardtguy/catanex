@@ -18,7 +18,7 @@ $(document).ready(function(){
 
 // Refresh data on page
 function refresh(){
-	document.getElementById("status").classList.toggle("fa-spinner")
+	document.getElementById("status").classList.add("fa-spinner")
 	Promise.all([
 		refreshOrders,
 		refreshBalance,
@@ -26,7 +26,7 @@ function refresh(){
 		refreshChart
 	])
 	.then(() => {
-		document.getElementById("status").classList.toggle("fa-spinner");
+		document.getElementById("status").classList.remove("fa-spinner");
 	});
 }
 
