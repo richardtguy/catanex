@@ -19,15 +19,13 @@ $(document).ready(function(){
 // Refresh data on page
 function refresh(){
 	document.getElementById("api-status").classList.add("fa-spinner")
-	Promise.all([
-		refreshOrders(),
-		refreshBalance(),
-		refreshPrices(),
-		refreshChart()
-	])
-	.then(() => {
-		document.getElementById("api-status").classList.remove("fa-spinner");
-	});
+	refreshOrders()
+		.then(refreshBalance())
+		.then(refreshPrices())
+		.then(refreshChart())
+		.then(() => {
+			document.getElementById("api-status").classList.remove("fa-spinner");
+		});
 }
 
 
@@ -36,13 +34,12 @@ function cancelOrder(id){
 	fetch('/api/orders/'+id, {
 		method: 'delete'
 	})
-		.then(data => refresh());
+		.then(() => refresh());
 }
 
 // API call to get list of orders for account and write to table
 function refreshOrders() {
-	return new Promise(function(resolve, reject) {
-		fetch("/api/orders/"+account)
+	return fetch("/api/orders/"+account)
 		.then(response => response.json())
 		.then(data => {
 			var orders = data;				
@@ -71,15 +68,12 @@ function refreshOrders() {
 				btn.onclick = function(){
 					cancelOrder(this.id);
 			}});
-			resolve()
 		})
-	})
 }
 
 // API call to get latest bid/ask prices for each stock and write to table
 function refreshPrices() {
-	return new Promise(function(resolve, reject) {
-		fetch("/api/prices")
+	return fetch("/api/prices")
 		.then(response => response.json())
 		.then(data => {
 			var table = document.getElementById("priceTableBody");
@@ -95,13 +89,11 @@ function refreshPrices() {
 			});
 			resolve()
 		})
-	})
 }
 
 // API call to get latest balance and write to page
 function refreshBalance() {
-	return new Promise(function(resolve, reject){
-		fetch("/api/accounts/"+account)
+	return fetch("/api/accounts/"+account)
 		.then(function(response) {
 			if(response.ok) {
 				return response.json();
@@ -126,7 +118,6 @@ function refreshBalance() {
 			$("#balance").html(data.balance)
 			resolve()
 		})
-	})
 }
 
 // Define colour palette
@@ -134,8 +125,7 @@ const palette = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A
 
 // Refresh chart
 function refreshChart() {
-	return new Promise(function(resolve, reject) {
-		fetch("/api/trades")
+	return fetch("/api/trades")
 		.then(function(response) {
 			return response.json();
 		})
@@ -177,7 +167,6 @@ function refreshChart() {
 			});
 			resolve()
 		})
-	})
 }
 
 // Get inputs from form and submit API call to create new order
