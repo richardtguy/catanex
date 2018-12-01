@@ -19,12 +19,10 @@ $(document).ready(function(){
 // Refresh data on page
 function refresh(){
 	document.getElementById("api-status").classList.add("fa-spinner")
-	Promise.all([
-		refreshOrders(),
-		refreshBalance(),
-		refreshPrices(),
-		refreshChart()
-	])
+	refreshBalance()
+		.then(() => refreshOrders())
+		.then(() => refreshPrices())
+		.then(() => refreshChart())
 		.then(() => {
 			document.getElementById("api-status").classList.remove("fa-spinner");
 		});
@@ -41,6 +39,7 @@ function cancelOrder(id){
 
 // API call to get list of orders for account and write to table
 function refreshOrders() {
+	console.log("refreshOrders");
 	return fetch("/api/orders/"+account)
 		.then(response => response.json())
 		.then(data => {
@@ -75,6 +74,7 @@ function refreshOrders() {
 
 // API call to get latest bid/ask prices for each stock and write to table
 function refreshPrices() {
+	console.log("refreshPrices");
 	return fetch("/api/prices")
 		.then(response => response.json())
 		.then(data => {
@@ -94,28 +94,34 @@ function refreshPrices() {
 
 // API call to get latest balance and write to page
 function refreshBalance() {
+	console.log("refreshBalance");
 	return fetch("/api/accounts/"+account)
 		.then(function(response) {
-			if(response.ok) {
-				return response.json();
+			if(response.status == 404) {
+				console.log("Account does not exist")
+				throw new Error('account does not exist');
 			}
+			return response.json();
+		})
+		.then(data => {
+			$("#balance").html(data.balance)
+		})
+		.catch(error => {
 			// If account not found, call API to create new account
-			fetch('/api/accounts', {
+			console.log("Account not found, creating new account")
+			return fetch('/api/accounts', {
 				method: 'post',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({'name': account})
 			})
-			.then(response => response.json())
-			.then(data => {
-				// Display welcome message
-				alert("Welcome to CatanEX, "+data.response.name+"! Your opening balance: $"+data.response.balance);
-				$("#balance").html(data.response.balance);
-			});
-		})
-		.then(data => {
-			$("#balance").html(data.balance)
+				.then(response => response.json())
+				.then(data => {
+					// Display welcome message
+					alert("Welcome to CatanEX, "+data.response.name+"! Your opening balance: $"+data.response.balance);
+					$("#balance").html(data.response.balance);
+				});
 		})
 }
 
@@ -124,6 +130,7 @@ const palette = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A
 
 // Refresh chart
 function refreshChart() {
+	console.log("refreshChart");
 	return fetch("/api/trades")
 		.then(function(response) {
 			return response.json();
