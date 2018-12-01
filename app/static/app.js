@@ -39,7 +39,6 @@ function cancelOrder(id){
 
 // API call to get list of orders for account and write to table
 function refreshOrders() {
-	console.log("refreshOrders");
 	return fetch("/api/orders/"+account)
 		.then(response => response.json())
 		.then(data => {
@@ -74,7 +73,6 @@ function refreshOrders() {
 
 // API call to get latest bid/ask prices for each stock and write to table
 function refreshPrices() {
-	console.log("refreshPrices");
 	return fetch("/api/prices")
 		.then(response => response.json())
 		.then(data => {
@@ -94,11 +92,9 @@ function refreshPrices() {
 
 // API call to get latest balance and write to page
 function refreshBalance() {
-	console.log("refreshBalance");
 	return fetch("/api/accounts/"+account)
 		.then(function(response) {
 			if(response.status == 404) {
-				console.log("Account does not exist")
 				throw new Error('account does not exist');
 			}
 			return response.json();
@@ -108,7 +104,6 @@ function refreshBalance() {
 		})
 		.catch(error => {
 			// If account not found, call API to create new account
-			console.log("Account not found, creating new account")
 			return fetch('/api/accounts', {
 				method: 'post',
 				headers: {
@@ -130,7 +125,6 @@ const palette = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A
 
 // Refresh chart
 function refreshChart() {
-	console.log("refreshChart");
 	return fetch("/api/trades")
 		.then(function(response) {
 			return response.json();
