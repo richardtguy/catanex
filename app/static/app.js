@@ -19,10 +19,12 @@ $(document).ready(function(){
 // Refresh data on page
 function refresh(){
 	document.getElementById("api-status").classList.add("fa-spinner")
-	refreshOrders()
-		.then(refreshBalance())
-		.then(refreshPrices())
-		.then(refreshChart())
+	Promise.all([
+		refreshOrders(),
+		refreshBalance(),
+		refreshPrices(),
+		refreshChart()
+	])
 		.then(() => {
 			document.getElementById("api-status").classList.remove("fa-spinner");
 		});
@@ -87,7 +89,6 @@ function refreshPrices() {
 				row.insertCell().innerHTML = this.best_ask;
 				row.insertCell().innerHTML = this.last;						
 			});
-			resolve()
 		})
 }
 
@@ -111,12 +112,10 @@ function refreshBalance() {
 				// Display welcome message
 				alert("Welcome to CatanEX, "+data.response.name+"! Your opening balance: $"+data.response.balance);
 				$("#balance").html(data.response.balance);
-				resolve()
 			});
 		})
 		.then(data => {
 			$("#balance").html(data.balance)
-			resolve()
 		})
 }
 
@@ -165,30 +164,35 @@ function refreshChart() {
 							}
 					}
 			});
-			resolve()
 		})
 }
 
 // Get inputs from form and submit API call to create new order
 $("form").submit(function(event) {
 	event.preventDefault();
-	var orderData = {
-		'account':	account,
-		'stock':		$("#stockOptions").val(),
-		'type':			'limit',
-		'side':			$("input[type='radio'][name='side']:checked").val(),
-		'volume':		parseInt($("#inputVolume").val()),
-		'limit':		Number($("#inputLimit").val())				
-	};
-	fetch('/api/orders', {
-		method: 'post',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(orderData)
-	})
-		.then(data => refresh());
-	$("#orderModal").modal("hide");
+	this.classList.add('was-validated');
+	if (this.checkValidity() === true) {
+		var orderData = {
+			'account':	account,
+			'stock':		$("#stockOptions").val(),
+			'type':			'limit',
+			'side':			$("input[type='radio'][name='side']:checked").val(),
+			'volume':		parseInt($("#inputVolume").val()),
+			'limit':		parseInt($("#inputLimit").val())				
+		};
+		fetch('/api/orders', {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(orderData)
+		})
+			.then(data => {
+				$("#orderModal").modal("hide");	
+				this.classList.remove('was-validated');
+				refresh();
+			})
+	}
 });
 
 // Connect websocket
