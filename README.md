@@ -32,6 +32,10 @@ Dashboard page to create/cancel orders, view best bid/ask and latest prices.
 
 If account does not exist, one is created automatically with a default balance.
 
+### Admin
+`/admin`
+Admin page to delete all accounts, orders and trades.
+
 ## API
 
 REST API to create, update and delete orders and accounts
