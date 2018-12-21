@@ -28,7 +28,7 @@ To connect to custom domain: ([help](https://devcenter.heroku.com/articles/custo
 
 ### Dashboard
 `/<account>`
-Dashboard page to create/cancel orders, view best bid/ask and latest prices.
+Individual user dashboard page to create/cancel orders, view best bid/ask and latest prices.
 
 If account does not exist, one is created automatically with a default balance.
 
